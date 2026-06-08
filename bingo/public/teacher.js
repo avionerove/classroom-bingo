@@ -171,11 +171,16 @@ function renderChipTray() {
   $("chipCount").textContent = `${chips.length}개` + (chips.length < 9 ? " (9개 이상 권장)" : "");
 }
 
-// ---------- 제목 ----------
+// ---------- 제목 & 설명 ----------
 let titleSaveTimer = null;
 $("titleInput").addEventListener("input", () => {
   clearTimeout(titleSaveTimer);
   titleSaveTimer = setTimeout(() => post("/api/teacher/title", { title: $("titleInput").value }), 300);
+});
+let descSaveTimer = null;
+$("descInput").addEventListener("input", () => {
+  clearTimeout(descSaveTimer);
+  descSaveTimer = setTimeout(() => post("/api/teacher/desc", { description: $("descInput").value }), 300);
 });
 
 // ---------- 규칙 ----------
@@ -300,9 +305,12 @@ function render() {
     applyModeUI();
     renderChipTray();
   }
-  // 제목 (입력 중이 아닐 때만 동기화)
+  // 제목·설명 (입력 중이 아닐 때만 동기화)
   if (document.activeElement !== $("titleInput") && $("titleInput").value !== (s.title || "")) {
     $("titleInput").value = s.title || "";
+  }
+  if (document.activeElement !== $("descInput") && $("descInput").value !== (s.description || "")) {
+    $("descInput").value = s.description || "";
   }
   // 규칙 셀렉트
   if ($("ruleSelect").value !== s.rule) $("ruleSelect").value = s.rule;

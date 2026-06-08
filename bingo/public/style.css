@@ -357,16 +357,23 @@ tr.is-reach td { background: rgba(124, 45, 18, 0.25); }
 .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .muted { color: var(--muted); }
 
-/* 빙고 제목 */
-.game-title {
-  font-size: 1.5rem; font-weight: 800; color: var(--accent);
-  text-align: center; padding: 10px 14px; margin-bottom: 12px;
+/* 빙고 제목 & 설명 (학생 화면) */
+.title-box {
+  text-align: center; padding: 12px 14px; margin-bottom: 12px;
   background: var(--panel); border: 1px solid #2b3a52; border-radius: 12px;
-  word-break: keep-all;
 }
+.title-main { font-size: 1.5rem; font-weight: 800; color: var(--accent); word-break: keep-all; }
+.title-sub { font-size: 0.95rem; color: var(--muted); margin-top: 4px; word-break: keep-all; }
+
+/* 빙고 제목 & 설명 (전자칠판) */
+.present-title-box { text-align: center; }
 .present-title {
-  text-align: center; font-weight: 900; color: var(--accent);
+  font-weight: 900; color: var(--accent);
   font-size: clamp(1.6rem, 4.5vw, 3.2rem); word-break: keep-all;
+}
+.present-desc {
+  color: var(--muted); margin-top: 6px;
+  font-size: clamp(1rem, 2.4vw, 1.8rem); word-break: keep-all;
 }
 .big-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
 .hidden { display: none !important; }

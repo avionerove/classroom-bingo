@@ -68,8 +68,12 @@ function render() {
   const s = serverState;
   if (!s) return;
   const title = (s.title || "").trim();
+  const desc = (s.description || "").trim();
   $("presentTitle").textContent = title;
   $("presentTitle").classList.toggle("hidden", !title);
+  $("presentDesc").textContent = desc;
+  $("presentDesc").classList.toggle("hidden", !desc);
+  $("presentTitleBox").classList.toggle("hidden", !title && !desc);
   $("presentRule").textContent = "규칙: " + (RULE_LABEL[s.rule] || s.rule) + " 완성";
   const total = (s.chips || []).length;
   const calledCount = (s.called || []).length;
