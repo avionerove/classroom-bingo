@@ -202,7 +202,7 @@ function renderBanner(s) {
   const b = $("banner");
   if (s.phase === "lobby") {
     b.className = "banner wait";
-    b.textContent = "⏳ 선생님이 게임을 준비하고 있어요...";
+    b.textContent = "⏳ 게임을 준비하고 있어요...";
   } else if (s.phase === "arrange") {
     if (isArrangeLocked()) {
       b.className = "banner win";
