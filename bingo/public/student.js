@@ -214,7 +214,7 @@ function renderBanner(s) {
   } else if (s.phase === "arrange") {
     if (isArrangeLocked()) {
       b.className = "banner win";
-      b.textContent = "⏳ 시간 종료! 빙고 게임이 시작될 때까지 기다려주세요.";
+      b.textContent = "⏳ 빙고 게임이 시작될 때까지 기다려주세요.";
     } else {
       b.className = "banner wait";
       b.textContent = "📝 스티커를 빙고판에 붙이세요.";
@@ -253,8 +253,6 @@ function renderTray(s) {
     tray.appendChild(el);
   });
   const placed = localBoard.filter((x) => x !== null).length;
-  $("clearBoardBtn").disabled = locked;
-  $("autoFillBtn").disabled = locked;
   $("trayHint").textContent = locked
     ? "⏳ 시간이 종료되어 더 이상 붙이거나 옮길 수 없어요."
     : `${placed}/9 칸 배치됨. 스티커를 탭하거나 드래그해서 칸에 넣으세요.`;
@@ -317,6 +315,9 @@ function renderBoard(s) {
   } else {
     $("boardHint").textContent = "";
   }
+  // '전체 비우기' 버튼: 배치 단계에서만, 시간 종료 시 비활성
+  $("clearBoardBtn").classList.toggle("hidden", !arranging);
+  $("clearBoardBtn").disabled = isArrangeLocked();
 }
 
 function renderBingoButton(s) {
@@ -462,19 +463,6 @@ function removeFromCell(index) {
 $("clearBoardBtn").addEventListener("click", () => {
   if (isArrangeLocked()) return;
   localBoard = [null, null, null, null, null, null, null, null, null];
-  saveBoard();
-});
-
-$("autoFillBtn").addEventListener("click", () => {
-  if (!serverState || isArrangeLocked()) return;
-  const ids = serverState.chips.map((c) => c.id);
-  // 섞기
-  for (let i = ids.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [ids[i], ids[j]] = [ids[j], ids[i]];
-  }
-  localBoard = [null, null, null, null, null, null, null, null, null];
-  for (let i = 0; i < 9 && i < ids.length; i++) localBoard[i] = ids[i];
   saveBoard();
 });
 
