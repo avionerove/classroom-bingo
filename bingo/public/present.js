@@ -100,7 +100,7 @@ function renderLobby(s) {
   students.forEach((st) => {
     const el = document.createElement("div");
     el.className = "p-sticker" + (st.online ? "" : " used");
-    el.textContent = "🙋🏻 " + st.name;
+    el.textContent = st.name;
     box.appendChild(el);
   });
 }
