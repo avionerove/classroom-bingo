@@ -3,6 +3,12 @@
 한 번만 올려두면 **PC·태블릿 어디서나 주소 하나로** 접속합니다. 아무 기기에도 설치할 게 없고,
 주소가 고정되며, 학교 WiFi의 '기기 격리' 문제도 사라집니다.
 
+**라이브 주소**: https://classroom-bingo-8a8f.onrender.com  (선생님 `/teacher`, 학생 `/`, 전자칠판 `/present`)
+
+> 🤖 **자동 배포(개발자용)**: 이 맥에는 자동 배포가 설정돼 있습니다.
+> 코드 수정 후 `bash ~/bingo-deploy.sh "메시지"` 한 줄이면 → GitHub push + Render 자동 배포까지 완료됩니다.
+> (GitHub: avionerove/classroom-bingo, Render Deploy Hook은 `~/.bingo-deploy-hook`에 저장. 둘 다 공개 저장소에는 안 올라감.)
+
 추천: **Render**(무료, 영구 주소). 아래 순서대로 하면 명령어 없이 됩니다.
 
 ---
