@@ -442,9 +442,11 @@ STATIC_FILES = {
     "/": ("index.html", "text/html; charset=utf-8"),
     "/teacher": ("teacher.html", "text/html; charset=utf-8"),
     "/student": ("index.html", "text/html; charset=utf-8"),
+    "/present": ("present.html", "text/html; charset=utf-8"),
     "/style.css": ("style.css", "text/css; charset=utf-8"),
     "/teacher.js": ("teacher.js", "application/javascript; charset=utf-8"),
     "/student.js": ("student.js", "application/javascript; charset=utf-8"),
+    "/present.js": ("present.js", "application/javascript; charset=utf-8"),
     "/celebrate.js": ("celebrate.js", "application/javascript; charset=utf-8"),
 }
 

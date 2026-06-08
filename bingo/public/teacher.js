@@ -89,7 +89,7 @@ function applyModeUI() {
   $("chipInput").placeholder = quiz ? "칸에 들어갈 답 (예: 56)" : "부를 단어/숫자 (예: 사과)";
   $("modeHint").textContent = quiz
     ? "문제를 먼저 쓰고, 칸에 들어갈 답을 입력하세요. 학생은 문제를 보고 답 칸을 찾습니다."
-    : "입력한 단어/숫자를 그대로 부릅니다. (전통 빙고)";
+    : "입력한 단어/숫자를 그대로 부릅니다.";
 }
 $("modeSelect").addEventListener("change", async () => {
   applyModeUI();
@@ -209,6 +209,11 @@ async function kick(clientId, name) {
   await post("/api/teacher/kick", { clientId });
 }
 
+// ---------- 전자칠판(프로젝션) 창 ----------
+$("presentBtn").addEventListener("click", () => {
+  window.open("/present", "bingoPresent", "width=1280,height=800");
+});
+
 // ---------- 문제 부르기 ----------
 $("callBtn").addEventListener("click", () => callNow(null));
 async function callNow(chipId) {
@@ -234,7 +239,7 @@ function renderCall(s) {
   }
   const done = calledSet.size >= total;
   $("callBtn").disabled = done;
-  $("callBtn").textContent = done ? "모든 문제를 다 불렀어요" : "🎲 다음 문제 무작위로 부르기";
+  $("callBtn").textContent = done ? "모든 문제를 다 불렀어요" : "🎲 랜덤 선택";
   const pool = $("callPool");
   pool.innerHTML = "";
   s.chips.forEach((c) => {
@@ -307,7 +312,7 @@ function render() {
 function phaseHint(s) {
   if (s.phase === "lobby") return "스티커와 규칙을 정한 뒤 '배치 단계 시작'을 누르세요.";
   if (s.phase === "arrange") return "학생들이 스티커를 배치하는 중입니다. 모두 배치되면 '게임 시작'을 누르세요.";
-  if (s.phase === "playing") return `게임 진행 중 — 규칙: ${RULE_LABEL[s.rule]} 완성. '다음 문제 부르기'를 눌러 진행하세요!`;
+  if (s.phase === "playing") return `게임 진행 중 — 규칙: ${RULE_LABEL[s.rule]} 완성. '랜덤 선택'이나 스티커를 눌러 문제를 부르세요!`;
   return "";
 }
 

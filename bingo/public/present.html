@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>빙고 - 전자칠판 화면</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="present-wrap">
+  <div class="present-top">
+    <span id="presentRule">규칙</span>
+    <span id="presentProgress">0 / 0</span>
+  </div>
+
+  <!-- 대기(lobby) -->
+  <div id="presentLobby" class="present-center hidden">
+    <div class="present-call" style="color:var(--muted)">게임 준비 중…</div>
+  </div>
+
+  <!-- 배치 단계 -->
+  <div id="presentArrange" class="hidden">
+    <div class="present-timer" id="presentTimerBox">
+      <span class="glass">⏳</span>
+      <span class="present-timer-time" id="presentTime">--:--</span>
+      <button id="presentExtendBtn" class="big secondary">+30초 연장</button>
+    </div>
+    <div class="present-bar"><i id="presentBar"></i></div>
+    <div class="present-section-label">붙일 스티커</div>
+    <div class="present-stickers" id="presentArrangeStickers"></div>
+    <button id="presentStartBtn" class="big green present-big-action">▶ 게임 시작</button>
+  </div>
+
+  <!-- 게임 단계 -->
+  <div id="presentPlay" class="hidden">
+    <div class="present-center">
+      <div class="present-label" id="presentLabel">이번 문제</div>
+      <div class="present-call" id="presentCall">랜덤 선택 또는 스티커를 누르세요</div>
+    </div>
+    <button id="presentRandomBtn" class="big green present-big-action">🎲 랜덤 선택</button>
+    <div class="present-section-label">스티커를 눌러 부르기</div>
+    <div class="present-stickers" id="presentCallStickers"></div>
+    <div class="present-history-wrap">
+      <div class="present-history-title" id="presentHistoryTitle">지금까지 부른 문제</div>
+      <div class="present-history" id="presentHistory"></div>
+    </div>
+    <div class="present-winners" id="presentWinners"></div>
+  </div>
+</div>
+
+<!-- 빙고 축하 오버레이 -->
+<div id="celebrate" class="celebrate hidden"><div class="celebrate-inner" id="celebrateText"></div></div>
+
+<script src="/celebrate.js"></script>
+<script src="/present.js"></script>
+</body>
+</html>
