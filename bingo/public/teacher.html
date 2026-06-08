@@ -12,7 +12,8 @@
     <h1>👩‍🏫 빙고 선생님 화면</h1>
     <span class="pill" id="phasePill">대기</span>
   </div>
-  <p class="sub">학생 입장 주소: <b id="studentUrl">http://...:8000/</b></p>
+  <p class="sub">학생 입장 주소: <b id="studentUrl">http://...:8000/</b>
+    <button id="copyUrlBtn" class="small secondary" style="margin-left:8px;">📋 복사</button></p>
 
   <!-- 0. 빙고 제목 -->
   <div class="card">
@@ -38,10 +39,10 @@
       <input class="grow" type="text" id="chipInput" placeholder="부를 단어/숫자 (예: 사과)" autocomplete="off">
       <button id="addChipBtn">추가</button>
     </div>
+    <p class="hint">⏎ <b>Enter</b>를 누르면 추가돼요.</p>
     <div class="tray" id="chipTray" style="margin-top:14px;"></div>
     <p class="hint" id="chipCount">0개</p>
     <div class="row" style="margin-top:10px;">
-      <button class="secondary small" id="bulkBtn">여러 개 한 번에 입력 (쉼표로 구분)</button>
       <button class="secondary small danger" id="clearChipsBtn">전체 삭제</button>
     </div>
   </div>

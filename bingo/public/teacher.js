@@ -50,8 +50,22 @@ function updateTimerUI() {
 }
 setInterval(() => { if (serverState) updateTimerUI(); }, 250);
 
-// 학생 입장 주소 표시
+// 학생 입장 주소 표시 + 복사 버튼
 $("studentUrl").textContent = window.location.origin + "/";
+$("copyUrlBtn").addEventListener("click", async () => {
+  const url = window.location.origin + "/";
+  try {
+    await navigator.clipboard.writeText(url);
+    toast("학생 주소가 복사되었어요!");
+  } catch (e) {
+    // 클립보드 권한이 없을 때: 임시 선택 방식으로 복사 시도
+    const ta = document.createElement("textarea");
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); toast("학생 주소가 복사되었어요!"); }
+    catch (e2) { toast("복사 실패 — 주소를 길게 눌러 직접 복사하세요."); }
+    ta.remove();
+  }
+});
 
 // ---------- 통신 ----------
 async function post(url, body) {
@@ -120,18 +134,6 @@ function addChip() {
   (quiz ? $("clueInput") : $("chipInput")).focus();
   pushChips();
 }
-
-// 여러 개 한 번에 추가 (쉼표로 구분) — 답(칸 내용)을 한꺼번에 만들기
-$("bulkBtn").addEventListener("click", () => {
-  const quiz = curMode() === "quiz";
-  const label = quiz
-    ? "칸에 들어갈 답을 쉼표(,)로 구분해 입력하세요. (문제는 추가 후 각 칩을 지우고 개별로 다시 넣어도 됩니다)\n예) 56, 42, 12"
-    : "여러 단어/숫자를 쉼표(,)로 구분해 입력하세요.\n예) 사과, 바나나, 포도, 수박";
-  const text = prompt(label);
-  if (!text) return;
-  text.split(",").map((s) => s.trim()).filter(Boolean).forEach((s) => chips.push({ text: s, clue: "" }));
-  pushChips();
-});
 
 $("clearChipsBtn").addEventListener("click", () => {
   if (!confirm("모든 스티커를 삭제할까요? 학생들의 배치도 초기화됩니다.")) return;
