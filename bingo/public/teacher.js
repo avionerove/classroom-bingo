@@ -101,9 +101,13 @@ function applyModeUI() {
   const quiz = curMode() === "quiz";
   $("clueInput").classList.toggle("hidden", !quiz);
   $("chipInput").placeholder = quiz ? "칸에 들어갈 답 (예: 56)" : "부를 단어/숫자 (예: 사과)";
-  $("modeHint").textContent = quiz
-    ? "문제를 먼저 쓰고, 칸에 들어갈 답을 입력하세요. 학생은 문제를 보고 답 칸을 찾습니다."
-    : "입력한 단어/숫자를 그대로 부릅니다.";
+  if (quiz) {
+    $("modeHint").textContent = "문제를 먼저 쓰고, 칸에 들어갈 답을 입력하세요. 학생은 문제를 보고 답 칸을 찾습니다.";
+    $("modeHint").classList.remove("hidden");
+  } else {
+    $("modeHint").textContent = "";
+    $("modeHint").classList.add("hidden");
+  }
 }
 $("modeSelect").addEventListener("change", async () => {
   applyModeUI();
