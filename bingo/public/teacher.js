@@ -3,7 +3,7 @@ const PHASE_LABEL = {
   lobby: "준비 중", arrange: "배치 단계", playing: "게임 진행 중"
 };
 const RULE_LABEL = {
-  "1line": "한 줄", "2line": "두 줄", "3line": "세 줄", "full": "풀하우스"
+  "1line": "한 줄", "2line": "두 줄", "3line": "세 줄", "full": "전체 채우기"
 };
 
 const $ = (id) => document.getElementById(id);

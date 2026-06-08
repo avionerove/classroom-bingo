@@ -1,5 +1,5 @@
 // ============ 전자칠판(프로젝션) 화면 — 교실 TV에서 직접 진행 ============
-const RULE_LABEL = { "1line": "한 줄", "2line": "두 줄", "3line": "세 줄", "full": "풀하우스" };
+const RULE_LABEL = { "1line": "한 줄", "2line": "두 줄", "3line": "세 줄", "full": "전체 채우기" };
 const $ = (id) => document.getElementById(id);
 let serverState = null;
 let lastCall = null;
