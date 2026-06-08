@@ -92,7 +92,7 @@ async function doJoin() {
   if (!res.ok) { toast(res.error || "입장 실패"); return; }
   $("loginScreen").classList.add("hidden");
   $("gameScreen").classList.remove("hidden");
-  $("helloName").textContent = "🎯 " + name;
+  $("helloName").textContent = "🙋 " + name;
   startPolling();
 }
 
@@ -137,14 +137,6 @@ function render() {
 
   $("rulePill").textContent = "규칙: " + (RULE_LABEL[s.rule] || s.rule);
 
-  // 빙고 제목 & 설명
-  const title = (s.title || "").trim();
-  const desc = (s.description || "").trim();
-  $("gameTitle").textContent = title;
-  $("gameTitle").classList.toggle("hidden", !title);
-  $("gameDesc").textContent = desc;
-  $("gameDesc").classList.toggle("hidden", !desc);
-  $("titleBox").classList.toggle("hidden", !title && !desc);
 
   // 배치 단계: 트레이|빙고판 좌우 배치 + 순위표 숨김(한 화면에 트레이+빙고판만)
   $("playArea").classList.toggle("arranging", s.phase === "arrange");
