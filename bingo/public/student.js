@@ -214,7 +214,7 @@ function renderBanner(s) {
   } else if (s.phase === "arrange") {
     if (isArrangeLocked()) {
       b.className = "banner win";
-      b.textContent = "⏳ 시간 종료! 배치가 잠겼어요. 선생님을 기다리세요.";
+      b.textContent = "⏳ 시간 종료! 빙고 게임이 시작될 때까지 기다려주세요.";
     } else {
       b.className = "banner wait";
       b.textContent = "📝 스티커를 빙고판에 붙이세요.";
