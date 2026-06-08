@@ -92,7 +92,7 @@ async function doJoin() {
   if (!res.ok) { toast(res.error || "입장 실패"); return; }
   $("loginScreen").classList.add("hidden");
   $("gameScreen").classList.remove("hidden");
-  $("helloName").textContent = "🙋 " + name;
+  $("helloName").textContent = "🙋🏻 " + name;
   startPolling();
 }
 
