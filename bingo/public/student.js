@@ -137,6 +137,11 @@ function render() {
 
   $("rulePill").textContent = "규칙: " + (RULE_LABEL[s.rule] || s.rule);
 
+  // 빙고 제목
+  const title = (s.title || "").trim();
+  $("gameTitle").textContent = title;
+  $("gameTitle").classList.toggle("hidden", !title);
+
   // 배치 단계: 트레이|빙고판 좌우 배치 + 순위표 숨김(한 화면에 트레이+빙고판만)
   $("playArea").classList.toggle("arranging", s.phase === "arrange");
   $("winnerCard").classList.toggle("hidden", s.phase === "arrange" || s.phase === "lobby");

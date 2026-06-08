@@ -38,6 +38,7 @@ RULE_NEED = {"1line": 1, "2line": 2, "3line": 3}
 COND = threading.Condition()          # 상태 보호 + long-poll 알림용
 state = {
     "phase": "lobby",                 # lobby -> arrange -> playing -> (replay)
+    "title": "",                      # 빙고 제목 (선택)
     "rule": "1line",                  # 1line / 2line / 3line / full
     "mode": "simple",                 # simple(답만 부르기) / quiz(문제→답)
     "chips": [],                      # [{"id": int, "text": str(정답), "clue": str(부를 때 보여줄 단서)}]
@@ -150,6 +151,7 @@ def teacher_view():
     return {
         "role": "teacher",
         "phase": state["phase"],
+        "title": state["title"],
         "rule": state["rule"],
         "mode": state["mode"],
         "chips": state["chips"],
@@ -183,6 +185,7 @@ def student_view(cid):
     return {
         "role": "student",
         "phase": state["phase"],
+        "title": state["title"],
         "rule": state["rule"],
         "chips": state["chips"],
         "registered": st is not None,
@@ -238,6 +241,12 @@ def act_teacher_mode(body):
     if m in ("simple", "quiz"):
         state["mode"] = m
         bump()
+    return {"ok": True}
+
+
+def act_teacher_title(body):
+    state["title"] = str(body.get("title", "")).strip()[:60]
+    bump()
     return {"ok": True}
 
 
@@ -423,6 +432,7 @@ ACTIONS = {
     "/api/teacher/chips": act_teacher_chips,
     "/api/teacher/rule": act_teacher_rule,
     "/api/teacher/mode": act_teacher_mode,
+    "/api/teacher/title": act_teacher_title,
     "/api/teacher/control": act_teacher_control,
     "/api/teacher/arrange-time": act_teacher_arrange_time,
     "/api/teacher/extend": act_teacher_extend,

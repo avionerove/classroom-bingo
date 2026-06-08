@@ -169,6 +169,13 @@ function renderChipTray() {
   $("chipCount").textContent = `${chips.length}개` + (chips.length < 9 ? " (9개 이상 권장)" : "");
 }
 
+// ---------- 제목 ----------
+let titleSaveTimer = null;
+$("titleInput").addEventListener("input", () => {
+  clearTimeout(titleSaveTimer);
+  titleSaveTimer = setTimeout(() => post("/api/teacher/title", { title: $("titleInput").value }), 300);
+});
+
 // ---------- 규칙 ----------
 $("ruleSelect").addEventListener("change", async () => {
   const res = await post("/api/teacher/rule", { rule: $("ruleSelect").value });
@@ -290,6 +297,10 @@ function render() {
     $("modeSelect").value = s.mode;
     applyModeUI();
     renderChipTray();
+  }
+  // 제목 (입력 중이 아닐 때만 동기화)
+  if (document.activeElement !== $("titleInput") && $("titleInput").value !== (s.title || "")) {
+    $("titleInput").value = s.title || "";
   }
   // 규칙 셀렉트
   if ($("ruleSelect").value !== s.rule) $("ruleSelect").value = s.rule;

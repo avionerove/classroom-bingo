@@ -67,6 +67,9 @@ async function callNow(chipId) {
 function render() {
   const s = serverState;
   if (!s) return;
+  const title = (s.title || "").trim();
+  $("presentTitle").textContent = title;
+  $("presentTitle").classList.toggle("hidden", !title);
   $("presentRule").textContent = "규칙: " + (RULE_LABEL[s.rule] || s.rule) + " 완성";
   const total = (s.chips || []).length;
   const calledCount = (s.called || []).length;
