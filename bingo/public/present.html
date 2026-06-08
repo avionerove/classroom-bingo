@@ -17,9 +17,11 @@
     <span id="presentProgress">0 / 0</span>
   </div>
 
-  <!-- 대기(lobby) -->
-  <div id="presentLobby" class="present-center hidden">
-    <div class="present-call" style="color:var(--muted)">게임 준비 중…</div>
+  <!-- 대기(lobby): 입장한 학생 목록 -->
+  <div id="presentLobby" class="hidden">
+    <div class="present-section-label" id="presentLobbyLabel">입장한 학생</div>
+    <div class="present-stickers" id="presentStudents"></div>
+    <div class="present-lobby-wait" id="presentLobbyWait">학생들이 입장하기를 기다리는 중이에요…</div>
   </div>
 
   <!-- 배치 단계 -->

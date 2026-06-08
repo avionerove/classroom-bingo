@@ -83,10 +83,26 @@ function render() {
   $("presentArrange").classList.toggle("hidden", s.phase !== "arrange");
   $("presentPlay").classList.toggle("hidden", s.phase !== "playing");
 
+  if (s.phase === "lobby") renderLobby(s);
   if (s.phase === "arrange") renderArrange(s);
   if (s.phase === "playing") renderPlay(s);
 
   maybeCelebrate(s);
+}
+
+function renderLobby(s) {
+  const students = s.students || [];
+  $("presentLobbyLabel").textContent = `입장한 학생 (${students.length}명)`;
+  $("presentLobbyLabel").classList.toggle("hidden", students.length === 0);
+  $("presentLobbyWait").classList.toggle("hidden", students.length > 0);
+  const box = $("presentStudents");
+  box.innerHTML = "";
+  students.forEach((st) => {
+    const el = document.createElement("div");
+    el.className = "p-sticker" + (st.online ? "" : " used");
+    el.textContent = "🙋🏻 " + st.name;
+    box.appendChild(el);
+  });
 }
 
 function renderArrange(s) {

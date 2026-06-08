@@ -335,7 +335,7 @@ function render() {
 }
 
 function phaseHint(s) {
-  if (s.phase === "lobby") return "스티커와 규칙을 정한 뒤 '배치 단계 시작'을 누르세요.";
+  if (s.phase === "lobby") return "스티커와 규칙을 정한 뒤 '스티커 붙이기 시작'을 누르세요.";
   if (s.phase === "arrange") return "학생들이 스티커를 배치하는 중입니다. 모두 배치되면 '게임 시작'을 누르세요.";
   if (s.phase === "playing") return `게임 진행 중 — 규칙: ${RULE_LABEL[s.rule]} 완성. '랜덤 선택'이나 스티커를 눌러 문제를 부르세요!`;
   return "";
