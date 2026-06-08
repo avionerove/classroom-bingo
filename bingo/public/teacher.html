@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>빙고 - 선생님 화면</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="flex-between" style="margin-bottom:6px;">
+    <h1>👩‍🏫 빙고 선생님 화면</h1>
+    <span class="pill" id="phasePill">대기</span>
+  </div>
+  <p class="sub">학생 입장 주소: <b id="studentUrl">http://...:8000/</b></p>
+
+  <!-- 1. 스티커 만들기 -->
+  <div class="card" id="chipCard">
+    <h2>① 빙고 방식 & 스티커 만들기</h2>
+    <div class="row" style="margin-bottom:12px;">
+      <div class="grow">
+        <label for="modeSelect">빙고 방식</label>
+        <select id="modeSelect">
+          <option value="simple">일반 — 입력한 단어/숫자를 그대로 부르기</option>
+          <option value="quiz">학습 — 문제를 내고 답 맞히기 (문제 → 답)</option>
+        </select>
+      </div>
+    </div>
+    <p class="sub" id="modeHint">입력한 단어/숫자를 그대로 부릅니다. (전통 빙고)</p>
+    <div class="row">
+      <input class="grow hidden" type="text" id="clueInput" placeholder="문제/단서 (예: 7×8)" autocomplete="off">
+      <input class="grow" type="text" id="chipInput" placeholder="부를 단어/숫자 (예: 사과)" autocomplete="off">
+      <button id="addChipBtn">추가</button>
+    </div>
+    <div class="tray" id="chipTray" style="margin-top:14px;"></div>
+    <p class="hint" id="chipCount">0개</p>
+    <div class="row" style="margin-top:10px;">
+      <button class="secondary small" id="bulkBtn">여러 개 한 번에 입력 (쉼표로 구분)</button>
+      <button class="secondary small danger" id="clearChipsBtn">전체 삭제</button>
+    </div>
+  </div>
+
+  <!-- 2. 규칙 + 진행 -->
+  <div class="card">
+    <h2>② 빙고 규칙 & 게임 진행</h2>
+    <div class="row" style="margin-bottom:14px;">
+      <div class="grow">
+        <label for="ruleSelect">빙고 완성 조건</label>
+        <select id="ruleSelect">
+          <option value="1line">한 줄 완성 (1줄)</option>
+          <option value="2line">두 줄 완성 (2줄)</option>
+          <option value="3line">세 줄 완성 (3줄)</option>
+          <option value="full">풀하우스 (9칸 전체)</option>
+        </select>
+      </div>
+      <div class="grow">
+        <label for="timeSelect">⏳ 스티커 붙이기 제한시간</label>
+        <select id="timeSelect">
+          <option value="0">제한 없음</option>
+          <option value="30">30초</option>
+          <option value="60">1분</option>
+          <option value="120">2분</option>
+          <option value="180">3분</option>
+          <option value="300">5분</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 배치 단계 타이머 (배치 단계일 때만 표시) -->
+    <div id="teacherTimer" class="timer hidden" style="margin-bottom:14px;">
+      <span class="glass">⏳</span>
+      <div class="timer-main">
+        <div class="timer-label">배치 남은 시간</div>
+        <div class="timer-time" id="ttime">--:--</div>
+        <div class="timer-bar"><i id="tbar"></i></div>
+      </div>
+      <button id="extendBtn" class="small secondary">+30초 연장</button>
+    </div>
+    <div class="row">
+      <button id="arrangeBtn" class="warn">📝 배치 단계 시작</button>
+      <button id="playBtn" class="green">▶ 게임 시작</button>
+      <button id="replayBtn" class="secondary">↻ 색칠 초기화(재시작)</button>
+      <button id="resetBtn" class="secondary danger">⟲ 전체 초기화</button>
+    </div>
+    <p class="hint" id="phaseHint"></p>
+  </div>
+
+  <!-- 3. 호출 (게임 진행 중에만) -->
+  <div class="card hidden" id="callCard">
+    <div class="flex-between">
+      <h2>🎲 문제 부르기</h2>
+      <span class="pill" id="callProgress">0 / 0</span>
+    </div>
+    <div class="call-display" id="callDisplay">
+      <div class="call-label">이번 문제</div>
+      <div class="call-main" id="callMain">아래 버튼을 눌러 시작하세요</div>
+      <div class="call-answer" id="callAnswer"></div>
+    </div>
+    <div class="row" style="margin-top:14px;">
+      <button id="callBtn" class="big green" style="flex:1 1 auto;">🎲 다음 문제 무작위로 부르기</button>
+    </div>
+    <p class="hint" style="margin-top:12px;">또는 아래에서 직접 골라 부를 수 있어요 (이미 부른 건 회색):</p>
+    <div class="tray" id="callPool" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- 4. 빙고 순위 -->
+  <div class="card">
+    <h2>🏆 빙고 순위 (누른 순서대로)</h2>
+    <ul class="winner-list" id="winnerList"></ul>
+    <p class="muted" id="noWinner">아직 빙고를 외친 학생이 없습니다.</p>
+  </div>
+
+  <!-- 5. 학생 현황 -->
+  <div class="card">
+    <div class="flex-between">
+      <h2>👥 학생 현황</h2>
+      <span class="pill" id="studentCount">0명 접속</span>
+    </div>
+    <table>
+      <thead>
+        <tr><th>이름</th><th>상태</th><th>배치</th><th>색칠</th><th>줄</th><th>리치</th><th>빙고</th><th></th></tr>
+      </thead>
+      <tbody id="studentRows"></tbody>
+    </table>
+    <p class="muted" id="noStudent">아직 입장한 학생이 없습니다.</p>
+  </div>
+</div>
+
+<!-- 빙고 축하 오버레이 -->
+<div id="celebrate" class="celebrate hidden"><div class="celebrate-inner" id="celebrateText"></div></div>
+
+<div class="toast" id="toast"></div>
+<script src="/celebrate.js"></script>
+<script src="/teacher.js"></script>
+</body>
+</html>
