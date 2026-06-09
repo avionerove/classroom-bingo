@@ -152,6 +152,17 @@ function renderPlay(s) {
     $("presentCall").textContent = "🎲 랜덤 선택 또는 스티커를 누르세요";
     lastCall = null;
   }
+  // 현재 문제를 찾아 색칠한 학생들
+  const markedBox = $("presentMarkedBy");
+  if (s.currentCall && s.currentCall.clue) {
+    const marked = s.currentCallMarkedBy || [];
+    markedBox.classList.remove("hidden");
+    markedBox.textContent = marked.length
+      ? `✅ 찾은 학생 (${marked.length}명): ${marked.join(", ")}`
+      : "✅ 찾은 학생: 아직 없어요";
+  } else {
+    markedBox.classList.add("hidden");
+  }
   // 누를 수 있는 스티커들
   const calledSet = new Set(s.called || []);
   const total = (s.chips || []).length;

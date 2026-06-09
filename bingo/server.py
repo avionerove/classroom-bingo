@@ -150,6 +150,15 @@ def teacher_view():
         })
     students.sort(key=lambda s: (not s["online"], s["name"]))
     cur = chip_by_id(state["currentCall"]) if state["currentCall"] is not None else None
+    # 현재 호출된 항목을 자기 칸에서 찾아 색칠한 학생 이름들
+    marked_by = []
+    if state["currentCall"] is not None:
+        ccid = state["currentCall"]
+        for st in state["students"].values():
+            for i in range(9):
+                if st["board"][i] == ccid and st["colored"][i]:
+                    marked_by.append(st["name"])
+                    break
     return {
         "role": "teacher",
         "phase": state["phase"],
@@ -162,6 +171,7 @@ def teacher_view():
         "winners": sorted(state["winners"], key=lambda w: w["rank"]),
         "called": state["called"],
         "currentCall": ({"id": cur["id"], "text": cur["text"], "clue": eff_clue(cur)} if cur else None),
+        "currentCallMarkedBy": marked_by,
         "arrangeSeconds": state["arrangeSeconds"],
         "arrangeRemainingMs": arrange_remaining_ms(),
         "version": state["version"],

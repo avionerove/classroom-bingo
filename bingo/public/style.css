@@ -322,6 +322,10 @@ tr.is-reach td { background: rgba(124, 45, 18, 0.25); }
 /* 전자칠판: 단계별 컨테이너 */
 #presentArrange, #presentPlay, #presentLobby { flex: 1 1 auto; display: flex; flex-direction: column; gap: 22px; justify-content: center; }
 .present-lobby-wait { text-align: center; color: var(--muted); font-size: clamp(1.2rem, 3vw, 2rem); }
+.present-marked {
+  text-align: center; color: var(--accent2); font-weight: 700;
+  font-size: clamp(1.1rem, 2.6vw, 1.9rem); word-break: keep-all; line-height: 1.4;
+}
 /* 게임 단계에서는 가운데 호출 영역이 화면을 다 차지하지 않게 (스티커 버튼이 보이도록) */
 #presentPlay .present-center { flex: 0 0 auto; padding: 10px 0; }
 
