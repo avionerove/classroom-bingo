@@ -14,7 +14,10 @@
   </div>
   <div class="present-top">
     <span id="presentRule">규칙</span>
-    <span id="presentProgress">0 / 0</span>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span id="presentProgress">👥 0명</span>
+      <button id="presentEndBtn" class="small secondary danger">🛑 게임 종료</button>
+    </div>
   </div>
 
   <!-- 대기(lobby): 입장한 학생 목록 + 시작 버튼 -->
@@ -54,6 +57,12 @@
       <div class="present-history" id="presentHistory"></div>
     </div>
     <div class="present-winners" id="presentWinners"></div>
+  </div>
+
+  <!-- 종료 화면 -->
+  <div id="presentClosed" class="present-center hidden">
+    <div class="present-call" style="color:var(--danger)">🚫 게임이 종료되었습니다</div>
+    <button id="presentReopenBtn" class="big green" style="max-width:420px; margin-top:28px;">🔓 다시 열기</button>
   </div>
 </div>
 

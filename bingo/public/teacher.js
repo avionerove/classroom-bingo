@@ -231,6 +231,12 @@ $("autoPlayBtn").addEventListener("click", async () => {
 });
 $("autoStopBtn").addEventListener("click", () => post("/api/teacher/autoplay", { action: "stop" }));
 
+// ---------- 게임 종료 / 다시 열기 ----------
+$("endBtn").addEventListener("click", () => {
+  if (serverState && serverState.closed) { control("reopen"); return; }
+  if (confirm("게임을 종료할까요?\n모든 학생이 로그아웃되고, 새로 입장할 수 없게 됩니다.")) control("end");
+});
+
 async function kick(clientId, name) {
   if (!confirm(`'${name}' 학생을 내보낼까요?`)) return;
   await post("/api/teacher/kick", { clientId });
@@ -333,9 +339,17 @@ function render() {
   }
   updateTimerUI();
 
-  // 단계 표시
-  $("phasePill").textContent = PHASE_LABEL[s.phase] || s.phase;
-  $("phaseHint").textContent = phaseHint(s);
+  // 단계 표시 (종료 상태면 별도 표시)
+  $("phasePill").textContent = s.closed ? "🚫 종료됨" : (PHASE_LABEL[s.phase] || s.phase);
+  $("phaseHint").textContent = s.closed ? "게임이 종료되어 학생 입장이 차단된 상태입니다. '🔓 다시 열기'를 누르면 다시 입장할 수 있어요." : phaseHint(s);
+  // 종료/다시 열기 버튼
+  if (s.closed) {
+    $("endBtn").textContent = "🔓 다시 열기";
+    $("endBtn").className = "green";
+  } else {
+    $("endBtn").textContent = "🛑 게임 종료하기";
+    $("endBtn").className = "secondary danger";
+  }
 
   // 자동 플레이 상태
   $("autoStopBtn").classList.toggle("hidden", !s.autoPlay);

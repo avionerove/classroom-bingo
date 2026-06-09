@@ -56,6 +56,12 @@ async function startPolling() {
 // ---------- 버튼 동작 ----------
 $("presentArrangeBtn").addEventListener("click", () => post("/api/teacher/control", { action: "arrange" }));
 $("presentAutoBtn").addEventListener("click", () => post("/api/teacher/autoplay", { action: "start" }));
+$("presentEndBtn").addEventListener("click", () => {
+  if (confirm("게임을 종료할까요?\n모든 학생이 로그아웃되고 새로 입장할 수 없게 됩니다.")) {
+    post("/api/teacher/control", { action: "end" });
+  }
+});
+$("presentReopenBtn").addEventListener("click", () => post("/api/teacher/control", { action: "reopen" }));
 $("presentExtendBtn").addEventListener("click", () => post("/api/teacher/extend", { seconds: 30 }));
 $("presentStartBtn").addEventListener("click", () => post("/api/teacher/control", { action: "play" }));
 $("presentRandomBtn").addEventListener("click", () => callNow(null));
@@ -80,6 +86,18 @@ function render() {
   // 우상단: 현재 접속 중인 학생 수
   const online = (s.students || []).filter((x) => x.online).length;
   $("presentProgress").textContent = `👥 ${online}명`;
+
+  // 종료 상태: 종료 화면만 표시
+  $("presentEndBtn").classList.toggle("hidden", !!s.closed);
+  if (s.closed) {
+    $("presentClosed").classList.remove("hidden");
+    $("presentLobby").classList.add("hidden");
+    $("presentArrange").classList.add("hidden");
+    $("presentPlay").classList.add("hidden");
+    prevWinners = 0;  // 다시 열었을 때 첫 우승 연출이 정상 동작하도록
+    return;
+  }
+  $("presentClosed").classList.add("hidden");
 
   $("presentLobby").classList.toggle("hidden", s.phase !== "lobby");
   $("presentArrange").classList.toggle("hidden", s.phase !== "arrange");

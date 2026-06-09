@@ -89,11 +89,29 @@ async function doJoin() {
   myName = name;
   localStorage.setItem("bingoName", name);
   const res = await post("/api/student/join", { clientId, name });
-  if (!res.ok) { toast(res.error || "입장 실패"); return; }
+  if (!res.ok) {
+    if (res.closed) { showLogin(true); }   // 게임 종료로 입장 차단
+    else { toast(res.error || "입장 실패"); }
+    return;
+  }
   $("loginScreen").classList.add("hidden");
   $("gameScreen").classList.remove("hidden");
   $("helloName").textContent = "🙋🏻 " + name;
   startPolling();
+}
+
+// 로그인 화면으로 되돌리기 (로그아웃 / 종료)
+function showLogin(closed) {
+  $("loginScreen").classList.remove("hidden");
+  $("gameScreen").classList.add("hidden");
+  if (closed) {
+    $("joinBtn").disabled = true;
+    $("loginNote").classList.remove("hidden");
+    $("loginNote").textContent = "🚫 게임이 종료되었습니다. 지금은 입장할 수 없어요.";
+  } else {
+    $("joinBtn").disabled = false;
+    $("loginNote").classList.add("hidden");
+  }
 }
 
 // 이미 입장한 적이 있으면 자동 재입장
@@ -134,6 +152,9 @@ async function startPolling() {
 function render() {
   const s = serverState;
   if (!s) return;
+
+  // 선생님이 게임을 종료/내보냄 → 로그아웃 처리
+  if (s.registered === false) { showLogin(s.closed); return; }
 
   $("rulePill").textContent = "규칙: " + (RULE_LABEL[s.rule] || s.rule);
 

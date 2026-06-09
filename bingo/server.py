@@ -52,6 +52,7 @@ state = {
     "autoPlay": False,                # 자동 플레이 진행 중
     "autoPlayGen": 0,                 # 자동 플레이 세대(취소 토큰)
     "autoCallSeconds": 7,             # 자동 호출 간격(초)
+    "closed": False,                  # 게임 종료(입장 차단) 상태
     "version": 1,                     # 변경마다 +1 (long-poll 기준)
 }
 _chip_seq = [0]
@@ -176,6 +177,7 @@ def teacher_view():
         "currentCall": ({"id": cur["id"], "text": cur["text"], "clue": eff_clue(cur)} if cur else None),
         "currentCallMarkedBy": marked_by,
         "autoPlay": state["autoPlay"],
+        "closed": state["closed"],
         "arrangeSeconds": state["arrangeSeconds"],
         "arrangeRemainingMs": arrange_remaining_ms(),
         "version": state["version"],
@@ -207,6 +209,7 @@ def student_view(cid):
         "rule": state["rule"],
         "chips": state["chips"],
         "registered": st is not None,
+        "closed": state["closed"],
         "me": me,
         "winners": sorted(state["winners"], key=lambda w: w["rank"]),
         "currentCall": ({"clue": eff_clue(cur)} if cur else None),
@@ -306,6 +309,17 @@ def act_teacher_control(body):
         state["arrangeEndsAt"] = None
         state["called"] = []
         state["currentCall"] = None
+    elif action == "end":
+        # 게임 종료: 모든 학생 로그아웃 + 입장 차단 + 게임 초기화
+        state["students"] = {}
+        state["winners"] = []
+        state["called"] = []
+        state["currentCall"] = None
+        state["phase"] = "lobby"
+        state["arrangeEndsAt"] = None
+        state["closed"] = True
+    elif action == "reopen":
+        state["closed"] = False
     else:
         return
     cancel_autoplay()  # 수동 제어 시 자동 플레이는 중단
@@ -442,6 +456,8 @@ def act_teacher_kick(body):
 def act_student_join(body):
     cid = body.get("clientId")
     name = str(body.get("name", "")).strip()
+    if state["closed"]:
+        return {"ok": False, "error": "closed", "closed": True}
     if not cid or not name:
         return {"ok": False, "error": "이름을 입력하세요."}
     st = state["students"].get(cid)
