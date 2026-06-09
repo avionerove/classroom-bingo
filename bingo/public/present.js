@@ -172,16 +172,16 @@ function renderPlay(s) {
     $("presentCall").textContent = "🎲 랜덤 선택 또는 스티커를 누르세요";
     lastCall = null;
   }
-  // 현재 문제를 찾아 색칠한 학생들
+  // 현재 문제를 찾아 색칠한 학생들 — 왼쪽 세로 일렬 (라벨 없음)
   const markedBox = $("presentMarkedBy");
+  markedBox.innerHTML = "";
   if (s.currentCall && s.currentCall.clue) {
-    const marked = s.currentCallMarkedBy || [];
-    markedBox.classList.remove("hidden");
-    markedBox.textContent = marked.length
-      ? `✅ 찾은 학생 (${marked.length}명): ${marked.join(", ")}`
-      : "✅ 찾은 학생: 아직 없어요";
-  } else {
-    markedBox.classList.add("hidden");
+    (s.currentCallMarkedBy || []).forEach((name) => {
+      const el = document.createElement("div");
+      el.className = "found-item";
+      el.textContent = "✅ " + name;
+      markedBox.appendChild(el);
+    });
   }
   // 누를 수 있는 스티커들
   const calledSet = new Set(s.called || []);

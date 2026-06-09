@@ -322,10 +322,19 @@ tr.is-reach td { background: rgba(124, 45, 18, 0.25); }
 /* 전자칠판: 단계별 컨테이너 */
 #presentArrange, #presentPlay, #presentLobby { flex: 1 1 auto; display: flex; flex-direction: column; gap: 22px; justify-content: center; }
 .present-lobby-wait { text-align: center; color: var(--muted); font-size: clamp(1.2rem, 3vw, 2rem); }
-.present-marked {
-  text-align: center; color: var(--accent2); font-weight: 700;
-  font-size: clamp(1.1rem, 2.6vw, 1.9rem); word-break: keep-all; line-height: 1.4;
+/* 게임 단계: 왼쪽 찾은 학생(세로) | 오른쪽 스티커(더 넓게) */
+.present-play-cols { display: flex; gap: 24px; align-items: flex-start; width: 100%; }
+.present-found {
+  flex: 0 0 auto; width: clamp(120px, 20%, 240px);
+  display: flex; flex-direction: column; gap: 10px;
 }
+.present-found .found-item {
+  background: #14532d; color: #86efac; font-weight: 800; text-align: center;
+  padding: 10px 14px; border-radius: 12px;
+  font-size: clamp(1rem, 2vw, 1.6rem); word-break: keep-all;
+  animation: callpop .3s ease;
+}
+.present-sticker-col { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
 /* 게임 단계에서는 가운데 호출 영역이 화면을 다 차지하지 않게 (스티커 버튼이 보이도록) */
 #presentPlay .present-center { flex: 0 0 auto; padding: 10px 0; }
 
