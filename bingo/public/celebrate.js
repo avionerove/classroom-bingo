@@ -80,6 +80,24 @@
     } catch (e) { /* 무음 무시 */ }
   };
 
+  // 가짜 빙고 등 '땡!' 부저음 (낮은 사각파)
+  window.playBuzzer = function () {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = "square";
+      const t = actx.currentTime;
+      o.frequency.setValueAtTime(200, t);
+      o.frequency.exponentialRampToValueAtTime(110, t + 0.35);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t); o.stop(t + 0.47);
+    } catch (e) {}
+  };
+
   // 호출 시 짧은 '딩' 소리
   window.playDing = function () {
     try {

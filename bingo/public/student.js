@@ -316,10 +316,7 @@ function renderBingoButton(s) {
   const btn = $("bingoBtn");
   const canShow = s.phase === "playing" && s.me && !s.me.bingoRank;
   btn.classList.toggle("hidden", !canShow);
-  if (canShow) {
-    btn.disabled = !s.me.canBingo;
-    btn.textContent = s.me.canBingo ? "🎉 빙고!" : "아직 빙고 조건 미완성";
-  }
+  if (canShow) updateBingoBtn();  // 버튼은 항상 누를 수 있음(가짜로 누르면 10초 잠금)
   // 결과 카드
   const resultCard = $("resultCard");
   if (s.me && s.me.bingoRank) {
@@ -475,10 +472,35 @@ async function toggleCell(index) {
   if (!res.ok) toast(res.error || "오류");
 }
 
+// 빙고 외치기 — 가짜 빙고면 10초 잠금(쿨다운) + 부저음
+let bingoLockUntil = 0;
+function updateBingoBtn() {
+  const btn = $("bingoBtn");
+  const remain = Math.ceil((bingoLockUntil - Date.now()) / 1000);
+  if (remain > 0) {
+    btn.disabled = true;
+    btn.textContent = `⏳ ${remain}초 후 다시!`;
+  } else {
+    btn.disabled = false;
+    btn.textContent = "🎉 빙고!";
+  }
+}
 $("bingoBtn").addEventListener("click", async () => {
+  if (Date.now() < bingoLockUntil) return;        // 잠금 중이면 무시
   const res = await post("/api/student/bingo", { clientId });
-  if (!res.ok) { toast(res.error || "아직 빙고가 아니에요"); }
+  if (res.ok) return;                              // 진짜 빙고: 폴링이 결과/축하 갱신
+  // 가짜 빙고 → 패널티
+  bingoLockUntil = Date.now() + 10000;
+  if (window.playBuzzer) playBuzzer();
+  toast("앗! 아직 빙고가 아니에요. 10초 후 다시 외칠 수 있어요.");
+  updateBingoBtn();
 });
+// 쿨다운 카운트다운 갱신
+setInterval(() => {
+  if (serverState && serverState.phase === "playing" && serverState.me && !serverState.me.bingoRank) {
+    updateBingoBtn();
+  }
+}, 250);
 
 // ---------- 토스트 ----------
 let toastTimer = null;
