@@ -222,6 +222,15 @@ async function control(action) {
   if (!res.ok) toast(res.error || "오류");
 }
 
+// ---------- 자동 플레이 ----------
+$("autoPlayBtn").addEventListener("click", async () => {
+  if (chips.length < 1) { toast("먼저 스티커를 만들어주세요."); return; }
+  if (!confirm("자동 플레이를 시작할까요?\n배치 시간을 자동으로 준 뒤, 게임을 시작하고 문제를 자동으로 불러줍니다.")) return;
+  const res = await post("/api/teacher/autoplay", { action: "start", autoCallSeconds: parseInt($("autoCallSelect").value, 10) });
+  if (!res.ok) toast(res.error || "자동 플레이 시작 실패");
+});
+$("autoStopBtn").addEventListener("click", () => post("/api/teacher/autoplay", { action: "stop" }));
+
 async function kick(clientId, name) {
   if (!confirm(`'${name}' 학생을 내보낼까요?`)) return;
   await post("/api/teacher/kick", { clientId });
@@ -327,6 +336,11 @@ function render() {
   // 단계 표시
   $("phasePill").textContent = PHASE_LABEL[s.phase] || s.phase;
   $("phaseHint").textContent = phaseHint(s);
+
+  // 자동 플레이 상태
+  $("autoStopBtn").classList.toggle("hidden", !s.autoPlay);
+  $("autoPlayBtn").disabled = !!s.autoPlay;
+  $("autoPlayBtn").textContent = s.autoPlay ? "▶▶ 자동 플레이 진행 중…" : "▶▶ 자동 플레이";
 
   renderCall(s);
   renderWinners(s);

@@ -93,6 +93,22 @@
     </div>
     <p class="hint">📺 전자칠판 창을 열어 교실 화면(TV)에 띄우면, 거기서 타이머·게임 시작·문제 부르기를 다 할 수 있어요.</p>
     <p class="hint" id="phaseHint"></p>
+
+    <hr style="border:none; border-top:1px solid #2b3a52; margin:16px 0;">
+    <div class="row" style="align-items:flex-end;">
+      <button id="autoPlayBtn" class="green">▶▶ 자동 플레이</button>
+      <button id="autoStopBtn" class="secondary danger hidden">⏸ 자동 정지</button>
+      <div style="flex:0 0 130px;">
+        <label for="autoCallSelect">자동 호출 간격</label>
+        <select id="autoCallSelect">
+          <option value="5">5초</option>
+          <option value="7" selected>7초</option>
+          <option value="10">10초</option>
+          <option value="15">15초</option>
+        </select>
+      </div>
+    </div>
+    <p class="hint">▶▶ <b>자동 플레이</b>: 누르면 배치 시간을 자동으로 준 뒤, 게임을 시작하고 문제를 간격마다 자동으로 불러줍니다. (배치 제한시간은 ⏳ 설정을 따름)</p>
   </div>
 
   <!-- 3. 호출 (게임 진행 중에만) -->

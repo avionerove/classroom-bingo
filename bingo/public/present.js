@@ -55,6 +55,7 @@ async function startPolling() {
 
 // ---------- 버튼 동작 ----------
 $("presentArrangeBtn").addEventListener("click", () => post("/api/teacher/control", { action: "arrange" }));
+$("presentAutoBtn").addEventListener("click", () => post("/api/teacher/autoplay", { action: "start" }));
 $("presentExtendBtn").addEventListener("click", () => post("/api/teacher/extend", { seconds: 30 }));
 $("presentStartBtn").addEventListener("click", () => post("/api/teacher/control", { action: "play" }));
 $("presentRandomBtn").addEventListener("click", () => callNow(null));
@@ -104,12 +105,13 @@ function renderLobby(s) {
     el.textContent = st.name;
     box.appendChild(el);
   });
-  // '스티커 붙이기 시작' — 스티커가 만들어진 뒤에만 가능
+  // '스티커 붙이기 시작' / '자동 플레이' — 스티커가 만들어진 뒤에만 가능
   const hasChips = (s.chips || []).length > 0;
   $("presentArrangeBtn").disabled = !hasChips;
   $("presentArrangeBtn").textContent = hasChips
     ? "📝 스티커 붙이기 시작"
     : "스티커를 먼저 만들어 주세요 (선생님 화면)";
+  $("presentAutoBtn").disabled = !hasChips;
 }
 
 function renderArrange(s) {

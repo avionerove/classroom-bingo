@@ -49,6 +49,9 @@ state = {
     "currentCall": None,              # 마지막으로 호출된 chip id
     "arrangeSeconds": 120,            # 배치 단계 제한시간(초). 0이면 제한 없음
     "arrangeEndsAt": None,            # 배치 종료 시각(epoch). None이면 제한 없음
+    "autoPlay": False,                # 자동 플레이 진행 중
+    "autoPlayGen": 0,                 # 자동 플레이 세대(취소 토큰)
+    "autoCallSeconds": 7,             # 자동 호출 간격(초)
     "version": 1,                     # 변경마다 +1 (long-poll 기준)
 }
 _chip_seq = [0]
@@ -172,6 +175,7 @@ def teacher_view():
         "called": state["called"],
         "currentCall": ({"id": cur["id"], "text": cur["text"], "clue": eff_clue(cur)} if cur else None),
         "currentCallMarkedBy": marked_by,
+        "autoPlay": state["autoPlay"],
         "arrangeSeconds": state["arrangeSeconds"],
         "arrangeRemainingMs": arrange_remaining_ms(),
         "version": state["version"],
@@ -219,6 +223,7 @@ def student_view(cid):
 # 액션 처리 (모두 COND 잠금 안에서 실행)
 # ---------------------------------------------------------------------------
 def act_teacher_chips(body):
+    cancel_autoplay()
     chips = []
     for item in body.get("chips", []):
         if isinstance(item, dict):
@@ -303,7 +308,96 @@ def act_teacher_control(body):
         state["currentCall"] = None
     else:
         return
+    cancel_autoplay()  # 수동 제어 시 자동 플레이는 중단
     bump()
+
+
+# ---------------------------------------------------------------------------
+# 자동 플레이 (배치 시간 자동 → 게임 시작 → 문제 자동 호출)
+# ---------------------------------------------------------------------------
+def cancel_autoplay():
+    if state["autoPlay"]:
+        state["autoPlay"] = False
+        state["autoPlayGen"] += 1
+
+
+def _autoplay_alive(gen):
+    return state["autoPlay"] and state["autoPlayGen"] == gen
+
+
+def autoplay_worker(gen):
+    # 단계 A: 배치 시간이 끝날 때까지 대기 → 게임 시작
+    while _autoplay_alive(gen):
+        with COND:
+            if state["autoPlayGen"] != gen or not state["autoPlay"]:
+                return
+            if state["phase"] != "arrange":
+                break
+            ends = state["arrangeEndsAt"]
+            if ends is not None and now() >= ends:
+                state["phase"] = "playing"
+                state["arrangeEndsAt"] = None
+                state["called"] = []
+                state["currentCall"] = None
+                bump()
+                break
+        time.sleep(0.3)
+    # 단계 B: 일정 간격으로 문제 자동 호출
+    while _autoplay_alive(gen):
+        with COND:
+            if state["autoPlayGen"] != gen or not state["autoPlay"]:
+                return
+            if state["phase"] != "playing":
+                return
+            called = set(state["called"])
+            pool = [c for c in state["chips"] if c["id"] not in called]
+            if not pool:
+                state["autoPlay"] = False   # 모두 호출됨 → 자동 종료
+                bump()
+                return
+            item = random.choice(pool)
+            state["called"].append(item["id"])
+            state["currentCall"] = item["id"]
+            bump()
+            interval = state["autoCallSeconds"]
+        waited = 0.0
+        while waited < interval:
+            if not _autoplay_alive(gen):
+                return
+            time.sleep(0.25)
+            waited += 0.25
+
+
+def act_teacher_autoplay(body):
+    if body.get("action") == "stop":
+        cancel_autoplay()
+        bump()
+        return {"ok": True}
+    # start
+    if not state["chips"]:
+        return {"ok": False, "error": "먼저 스티커를 만들어주세요."}
+    try:
+        sec = int(body.get("autoCallSeconds", state["autoCallSeconds"]))
+        state["autoCallSeconds"] = max(2, min(sec, 60))
+    except (TypeError, ValueError):
+        pass
+    state["autoPlayGen"] += 1
+    gen = state["autoPlayGen"]
+    state["autoPlay"] = True
+    # 새 게임 초기화 + 배치 단계(타이머) 시작
+    for st in state["students"].values():
+        st["board"] = [None] * 9
+        st["colored"] = [False] * 9
+        st["bingoRank"] = None
+    state["winners"] = []
+    state["called"] = []
+    state["currentCall"] = None
+    state["phase"] = "arrange"
+    arrange_secs = state["arrangeSeconds"] if state["arrangeSeconds"] > 0 else 60
+    state["arrangeEndsAt"] = now() + arrange_secs
+    bump()
+    threading.Thread(target=autoplay_worker, args=(gen,), daemon=True).start()
+    return {"ok": True}
 
 
 def act_teacher_arrange_time(body):
@@ -424,6 +518,7 @@ def act_teacher_call(body):
             return {"ok": False, "error": "부를 수 없는 항목이에요."}
     else:
         item = random.choice(pool)
+    cancel_autoplay()  # 수동 호출 시 자동 플레이는 중단(선생님이 직접 진행)
     state["called"].append(item["id"])
     state["currentCall"] = item["id"]
     bump()
@@ -455,6 +550,7 @@ ACTIONS = {
     "/api/teacher/title": act_teacher_title,
     "/api/teacher/desc": act_teacher_desc,
     "/api/teacher/control": act_teacher_control,
+    "/api/teacher/autoplay": act_teacher_autoplay,
     "/api/teacher/arrange-time": act_teacher_arrange_time,
     "/api/teacher/extend": act_teacher_extend,
     "/api/teacher/call": act_teacher_call,
