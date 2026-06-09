@@ -116,7 +116,8 @@ def eff_clue(chip):
 
 
 def is_online(st):
-    return (now() - st["lastSeen"]) < 12
+    # long-poll 대기(최대 25초)보다 길게 잡아야 접속 중인 학생이 깜빡이지 않는다
+    return (now() - st["lastSeen"]) < 30
 
 
 def arrange_remaining_ms():

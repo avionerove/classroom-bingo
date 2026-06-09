@@ -54,6 +54,7 @@ async function startPolling() {
 }
 
 // ---------- 버튼 동작 ----------
+$("presentArrangeBtn").addEventListener("click", () => post("/api/teacher/control", { action: "arrange" }));
 $("presentExtendBtn").addEventListener("click", () => post("/api/teacher/extend", { seconds: 30 }));
 $("presentStartBtn").addEventListener("click", () => post("/api/teacher/control", { action: "play" }));
 $("presentRandomBtn").addEventListener("click", () => callNow(null));
@@ -75,9 +76,9 @@ function render() {
   $("presentDesc").classList.toggle("hidden", !desc);
   $("presentTitleBox").classList.toggle("hidden", !title && !desc);
   $("presentRule").textContent = "규칙: " + (RULE_LABEL[s.rule] || s.rule) + " 완성";
-  const total = (s.chips || []).length;
-  const calledCount = (s.called || []).length;
-  $("presentProgress").textContent = `${calledCount} / ${total}`;
+  // 우상단: 현재 접속 중인 학생 수
+  const online = (s.students || []).filter((x) => x.online).length;
+  $("presentProgress").textContent = `👥 ${online}명`;
 
   $("presentLobby").classList.toggle("hidden", s.phase !== "lobby");
   $("presentArrange").classList.toggle("hidden", s.phase !== "arrange");
@@ -103,6 +104,12 @@ function renderLobby(s) {
     el.textContent = st.name;
     box.appendChild(el);
   });
+  // '스티커 붙이기 시작' — 스티커가 만들어진 뒤에만 가능
+  const hasChips = (s.chips || []).length > 0;
+  $("presentArrangeBtn").disabled = !hasChips;
+  $("presentArrangeBtn").textContent = hasChips
+    ? "📝 스티커 붙이기 시작"
+    : "스티커를 먼저 만들어 주세요 (선생님 화면)";
 }
 
 function renderArrange(s) {
