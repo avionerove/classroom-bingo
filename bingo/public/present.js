@@ -179,7 +179,7 @@ function renderPlay(s) {
     (s.currentCallMarkedBy || []).forEach((name) => {
       const el = document.createElement("div");
       el.className = "found-item";
-      el.textContent = "✅ " + name;
+      el.textContent = name;
       markedBox.appendChild(el);
     });
   }
